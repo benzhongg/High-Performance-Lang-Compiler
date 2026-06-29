@@ -1,54 +1,96 @@
 # Custom Lang Compiler
 - Given a source .hplc file produce a valid program file for execution
+
 <br>
+
 - What is the .hplc file?
     - contains source instructions that match the simple instruction set from our HighPerf Interpreter project
+
 <br>
+
 - What is a valid program file?
     - an exectuable file -> bytecode
 
-## 1. Preprocess
-- locate macros
-- resolve compiler definitions   
-- reads input .hplc file
-- produces ResolvedSourceCode
 <br>
-- What does the ResolvedSourceCode look like?
-    - text
+
+## 1. Preprocessor
+### 1.a Introduction
+- It will take as input an unmodified source .hlpc file and check for macros.
+- Outputs modified code file -> ResolvedSourceCode (text).
+- The preprocessor is the first stage in the compiler system. 
+
+### 1.b Responsiblities + Jobs + Behavior
+- produces ResolvedSourceCode
+- reads input .hplc file
+- resolve preprocessor codes
 
 ## 2. Lexer
-- validate syntax in ResolvedSourceCode
-- then generate token tree from ResolvedSourceCode
-<br>
-- What is the syntax?
-    - accepted HPLC keywords(types + operators)
-<br>
-- What is a token tree?
-    - tree representation of program flow
-    - control flow graph?
+### 2.a Introduction
+- The lexer is responsible for lexical analysis. It's sole responsiblity is to break the source code into chunks of tokens. 
+- Incorrectly written code will be caught at the stage if the text doesn't fit any existing token.
+- Takes in preprocessor output. 
+- Sends its own output to parser. 
 
-## 3. Parse Token
-- generates AST tree from token tree
-- understand and validate code logic (everything)
-    - ex: obj accessing, type checking, bounds checking
-<br>  
-- What does correct code logic look like?
-    - correct code syntax with valid parameters and operators 
+### 2.b Responsibilities + Jobs + Behavior
+- Input is ResolvedSourceCode
+- tokenizes code one token at a time
+- Output is a token list 
 <br>
-- What is an AST tree?
-    - a specialized token tree representing validated code statements and logic 
+- What are tokens?
+- Tokens are chunks of source code.
+- Token lists are list of tokens.
+- Struct Token
+    {
+        type,
+        lexeme,
+        column,
+        row
+    }
 
-## 4. Optimizer
-- resolve simple code logic and skipped code logic 
-- prunes AST tree
-- generates another AST tree?
+## 3. Parser
+### 3.a Introduction
+- The parser performs syntax analysis. It will validate token relationships based on a set of grammar rules. And in the process develop a syntax tree. 
+- It will throw errors upon encountering missing required tokens or extra tokens.
+- One example is missing a paranthesis or having an extra one, another example if comparison parameter checking. 
 
-## 5. CodeGenerator
-- produces bytecode instructions from AST
-- valid bytecode instructions written to a program output file
-<br>
-- What do bytecode instructions look like?
-    - hexadecimal
-<br>
-- What is the program output file?
-    - undecided?
+### 3.b Responsibilities + Job + Behavior
+- Input is a token list
+- Check syntax
+- Outputs Abstract Syntax Tree
+
+## 4. Semantic Analyzer
+### 4.a Introduction
+- The Semantic Analyzer checks the code logic - types, meaning, and rules of the code.
+- It will find any errors in semantics but not technical computational errors.
+
+### 4.b Responsiblities + Job + Behavior
+- Input is an abstract syntax tree
+- decorates and verifies the syntax tree
+- Output is an abstract syntax tree
+
+
+## 5. Instruction Generator 
+### 5.a Introduction
+- The Instruction Generator is responsible for translating the validated AST into an abstract custom assembly like language. 
+
+### 5.b Responsibilities + Jobs + Behavior
+- Input is AST
+- Output is assembly-like IR text 
+
+
+## 6. Optimizer
+### 6.a Introduction
+- Optimizations take place over the IR representation of the code. Example Dead Code elimination
+
+### 6.b Responsibilities + Jobs + Behavior
+- Input is IR
+- Output is IR
+
+## 7. ByteCodeGenerator
+
+### 7.a Introduction
+- generates a bytecode program file from the IR list  
+
+### 7.b Responsiblities + Jobs + Responsibilities
+- Input is IR
+- Output is executable program file and 
