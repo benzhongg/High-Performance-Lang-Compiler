@@ -1,28 +1,59 @@
 # Custom Lang Compiler
-- Given a source .hplc file produce a valid program file for execution
 
-<br>
-
-- What is the .hplc file?
-    - contains source instructions that match the simple instruction set from our HighPerf Interpreter project
-
-<br>
-
-- What is a valid program file?
-    - an exectuable file -> bytecode
-
-<br>
+```text
+    -----------------
+    │  .HPLC File   │
+    -----------------
+            |
+            ▼
+┌────────────────────────┐                          
+│     Preprocessor       │              
+└────────────────────────┘
+            |
+            ▼
+    ┌─────────────────┐          ┌─────────────────┐          ┌────────────────────────────┐
+    │      Lexer      │─────────>│     Parser      │─────────>│      Semantic Analyzer     │
+    └─────────────────┘          └─────────────────┘          └────────────────────────────┘ 
+                                      ┌──────────────────────────────────┘
+                                      ▼
+                           ┌─────────────────────────┐                          
+                           │  Instruction Generator  │              
+                           └─────────────────────────┘          
+                                      │
+                                      ▼
+                            ┌────────────────────────┐                          
+                            │  Optimization Pass #1  │              
+                            └────────────────────────┘
+                                      │
+                                      ▼
+                            ┌────────────────────────┐                          
+                            │  Optimization Pass #2  │              
+                            └────────────────────────┘
+                                      │
+                                      ▼
+                            ┌────────────────────────┐                          
+                            │  Optimization Pass #3  │              
+                            └────────────────────────┘
+                          ┌────────────┘
+                          ▼
+        ┌───────────────────────────────────┐
+        │         ByteCode Generator        │
+        └───────────────────────────────────┘
+                          │
+                          ▼
+                 ----------------
+                 |  Executable  │
+                 ----------------
+```
 
 ## 1. Preprocessor
 ### 1.a Introduction
-- It will take as input an unmodified source .hlpc file and check for macros.
-- Outputs modified code file -> ResolvedSourceCode (text).
-- The preprocessor is the first stage in the compiler system. 
+- The preprocessor will read source a .hlpc file and resolve macros.
 
 ### 1.b Responsiblities + Jobs + Behavior
-- produces ResolvedSourceCode
-- reads input .hplc file
+- input is an .hplc file
 - resolve preprocessor codes
+- output is string (ResolvedSourceCode)
 
 ## 2. Lexer
 ### 2.a Introduction
@@ -39,6 +70,7 @@
 - What are tokens?
 - Tokens are chunks of source code.
 - Token lists are list of tokens.
+```text
 - Struct Token
     {
         type,
@@ -46,6 +78,7 @@
         column,
         row
     }
+```
 
 ## 3. Parser
 ### 3.a Introduction
@@ -56,7 +89,7 @@
 ### 3.b Responsibilities + Job + Behavior
 - Input is a token list
 - Check syntax
-- Outputs Abstract Syntax Tree
+- Output is an Abstract Syntax Tree
 
 ## 4. Semantic Analyzer
 ### 4.a Introduction
