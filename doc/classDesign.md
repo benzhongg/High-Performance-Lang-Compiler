@@ -4,6 +4,7 @@
 ### 1.a Classes
 - FileReader
     - Take in filepath or an existing file stream
+
 - MacroResolver
     - Approach #1
     - resolveMacros(FileReader reader1)
@@ -17,10 +18,6 @@
         - single responsibility
 
 ### 1.b Tests
-- Preprocessor.process(validfile.hplc) -> success
-- FileReader(validfile.hplc) -> success
-- MacroResolver(FileReader(validfile.hplc)) -> string of text
-- MacroResolver(FileReader)
 - echo "#DEFINE Foo 5" >> example.hplc | MacroResolver(....) -> string of text should have a variable named foo = 5
 
 ## 2. Lexer Module
@@ -31,57 +28,92 @@
         - enum TokenTypes
     - lexeme
     - column
-    - row 
-- class Scanner
-    Input Approach
-    - Scanner(string literal); //in memory
-    
-    API approach #1
-    - tokenize() //returns full list of tokens, throws error on unidentified tok types
-    
-    API approach #2
-    - getNextToken();
+    - row
+    - filename
+
+- class Lexer()
+    - Lexer();
+    - tokenize(string literal)
 
 ### 2.b Tests
 example string = "int x = 0;"
-approach 1
 - tokenize() outputs [token1, token2, token3, token4, token 5]
-approach 2
-- nextToken() outputs resultToken{keyword_ident, 'int', 0, 0}
 
 ## 3. Parser Module
 ### 3.a Classes
-- struct Node()
-    - abstract node representations
-    - addLeftOperand()
-    - addInitializerValue()
-- struct Tree 
-class Noder
-    - assemble(//list of nodes) 
+```text
+- struct NodeBase 
+    {
+        nodeType,
+        col,
+        row,
+        filename
+    }
+We are not implementing all NodeTypes
+
+- struct ProgramNode : public NodeBase
+// represents a list of base nodes
+    {
+        List<Node>
+    }
+
+- struct ExpressionNode : public NodeBase
+    {
+
+    }
+
+// "a == b" is a binary expression, "1 + 2" as well, "a > b"
+- struct BinaryExpression : ExpressionNode
+    {
+        operatorType operator; //+, - , /, * 
+        ExpressionNode leftOperand;
+        ExpresssionNode rightOperand;         
+    } 
+
+- struct PostFixExpression : ExpressionNode
+    {
+        operatorType operator;
+        IdentifierExpression Identifier;        
+    }
+
+- struct AddressOfNode : ExpressionNode
+    {
+        ExpressionNode operand;
+    }
+
+- struct DereferenceNode : ExpressionNode
+    {
+        ExpressionNode operand;
+    }
+
+- struct SizeOfNode : ExpressionNode
+    {
+        ExpressionNode operand;
+    }
+```
 
 ### 3.b Tests
-- assemble(Nodes) -> Tree
-
+- parse(tokenList input) -> ProgramNode
 
 ## 4. Semantic Analyzer
 ### 4.a Classes
-
-- class Checker
-    - run(Tree treeInput)
+- class Semantic
+    - analyze(Tree treeInput)
 
 ### 4.b Tests
-- run(treeInput) -> no exception thrown
+- analyze(ProgramNode) -> no exception thrown
+- analyze("int x = "helloworld") -> exception thrown
 
 ## 5. Instruction Generator
 ### 5.a Classes
-- struct InstructionBase
-- struct Instruction
-    - grabNextNode(Tree TreeInput)
+- class InstructionGenerator
+    - lower(ProgramNode)
 - class FileWriter
-    - addNewLine()
+- struct Instructions (same as Instruction Set from Interpreter)
+
 
 ### 5.b Tests
-- InstructionBase.grabNextNode() -> turns Instruction into fully defined obj
+- InstructionGenerator(ProgramNode) -> output instruction file
 
 
 ## 6. Optimizations
@@ -102,8 +134,9 @@ class Noder
 
 ## 7. ByteCode Generator
 ### 7.a Classes
-- class Translator 
+- class ByteCodeGenerator 
+    - lower(InstructionFile)
 - class FileWriter
 
 ### 7.b Tests
--
+- lower(InstructionFile input) -> executable
