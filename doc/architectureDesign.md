@@ -48,8 +48,9 @@
 
 ## 1. Preprocessor
 ### 1.a Introduction
-- The preprocessor will read source a .hlpc file and resolve macros.
+- The preprocessor will read source a .hplc file and resolve macros.
 
+- The preprocessor should take in a FileReader
 ### 1.b Responsiblities + Jobs + Behavior
 - input is an .hplc file
 - resolve preprocessor codes

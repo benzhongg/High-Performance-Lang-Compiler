@@ -3,19 +3,11 @@
 ## 1. Preprocessor Module
 ### 1.a Classes
 - FileReader
-    - Take in filepath or an existing file stream
+    - Input is filepath
 
 - MacroResolver
     - Approach #1
-    - resolveMacros(FileReader reader1)
-        - visitor pattern 
-        - MacroResolver takes in FileReader
-        - Based on visitor pattern, we can inject FileReader obj to a function named resolveMacros of the MacroReader class
-
-    - Approach #2
-    - preprocessor(FileReader, MacroResolver);
-        - it's weak because we're having one class hold one function 
-        - single responsibility
+    - resolveMacros(string)
 
 ### 1.b Tests
 - echo "#DEFINE Foo 5" >> example.hplc | MacroResolver(....) -> string of text should have a variable named foo = 5
@@ -33,7 +25,8 @@
 
 - class Lexer()
     - Lexer();
-    - tokenize(string literal)
+    - std::vector<Tokens> tokenize(string literal)
+
 
 ### 2.b Tests
 example string = "int x = 0;"
@@ -102,7 +95,6 @@ We are not implementing all NodeTypes
 
 ### 4.b Tests
 - analyze(ProgramNode) -> no exception thrown
-- analyze("int x = "helloworld") -> exception thrown
 
 ## 5. Instruction Generator
 ### 5.a Classes
@@ -122,7 +114,7 @@ We are not implementing all NodeTypes
 
 - struct ControlFlowGraphs
 
-- class Optimizer()
+- class OptimizerO1
     - deadCodeElimination()
     - constantFolding()
     - constantAndCopyPropogation()
