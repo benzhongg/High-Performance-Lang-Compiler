@@ -1,11 +1,11 @@
 #pragma once
-#include "lexer.h"
 #include "expression_node.h"
+#include "lexer.h"
 
 using SyntaxTree = ProgramNode;
 
 class ParserBase
-{   
-    public:
-        virtual SyntaxTree parse(TokenVector targetVector) = 0; 
+{
+public:
+  virtual SyntaxTree parse(TokenVector targetVector) = 0;
 };

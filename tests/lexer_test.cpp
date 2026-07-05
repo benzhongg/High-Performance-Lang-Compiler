@@ -1,7 +1,3 @@
 #include <gtest/gtest.h>
 
-TEST(LexerModule, helloworld)
-{
-    ASSERT_EQ(1, 1);
-}
-
+TEST(LexerModule, helloworld) { ASSERT_EQ(1, 1); }

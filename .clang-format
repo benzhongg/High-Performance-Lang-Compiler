@@ -1,0 +1,18 @@
+---
+Language: Cpp
+BasedOnStyle: LLVM
+
+# structural layout preferences
+BreakBeforeBraces: Allman
+PointerAlignment: Left
+AccessModifierOffset: -2
+ColumnLimit: 120
+IndentWidth: 2
+
+AlignConsecutiveDeclarations:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: true
+  AlignCompound: true
+AlignConsecutiveAssignments: true
+SpaceBeforeCpp11BracedList: true

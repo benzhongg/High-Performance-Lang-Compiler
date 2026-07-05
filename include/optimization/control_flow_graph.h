@@ -2,10 +2,8 @@
 
 struct BasicBlockBase
 {
-
 };
 
 struct ControlFlowGraphBase
 {
-
 };

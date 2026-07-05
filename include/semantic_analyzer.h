@@ -3,8 +3,6 @@
 
 class SemanticAnalyzerBase
 {
-
 public:
-    virtual SyntaxTree analyze(SyntaxTree targetAST) = 0;
-
+  virtual SyntaxTree analyze(SyntaxTree targetAST) = 0;
 };
