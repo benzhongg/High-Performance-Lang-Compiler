@@ -1,11 +1,9 @@
+add_library(LIBRARY 
+	preprocessor.cpp
+)
 
-#set(SOURCES
-#	header.cpp
-#	)
+file(COPY "${CMAKE_SOURCE_DIR}/data" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 
-#add_library(LIBRARY {SOURCES})
-#target_include_directories(LIBRARY PUBLIC {CMAKE_SOURCE_DIR}/include)
-#
+target_include_directories(LIBRARY PUBLIC ${CMAKE_SOURCE_DIR}/include)
 add_executable(High-Performance-Lang-Compiler main.cpp)
-#target_link_libraries(High-Performance-Lang-Compiler PRIVATE LIBRARY)
-
+target_link_libraries(High-Performance-Lang-Compiler PRIVATE LIBRARY)
