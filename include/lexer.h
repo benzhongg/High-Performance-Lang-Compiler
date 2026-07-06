@@ -61,3 +61,22 @@ class LexerBase
 public:
   virtual TokenVector tokenize(std::string source_code) = 0;
 };
+
+
+using word = std::string;
+
+class HPLCLexer : public LexerBase
+{
+private:
+protected:
+  bool  isNumber(word word);
+  bool  isAlpha(word word);
+  Token getToken(word word);
+
+public:
+  TokenVector tokenize(std::string source_code) override
+  {
+    // approach #1 divide into words then getToken(word)
+    // aprooach #2 divide into lines then divide into words then getToken(word)
+  }
+};
