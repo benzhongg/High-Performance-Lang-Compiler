@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 
   // step 5 instruction generation module
   InstructionGeneratorBase* instructionGenerator {nullptr};
-  InstructionVector         instructionVector {instructionGenerator->lower(checkedSyntaxTree)};
+  InstructionVector         instructionVector {instructionGenerator->generate(checkedSyntaxTree)};
 
   // step 6 optimizer
   OptimizerBase*    optimizer {nullptr};
@@ -39,6 +39,6 @@ int main(int argc, char* argv[])
 
   // step 7 byteCodeGenerator
   ByteCodeGeneratorBase* byteCodeGenerator {nullptr};
-  std::string            executableName {};
-  byteCodeGenerator->generateUINT32(optimizedInstructionVector, executableName);
+  std::string            executableName {"exec"};
+  byteCodeGenerator->generate(optimizedInstructionVector, executableName);
 }

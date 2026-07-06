@@ -6,5 +6,5 @@
 class InstructionGeneratorBase
 {
 public:
-  virtual InstructionVector lower(SyntaxTree targetSyntaxTree) = 0;
+  virtual InstructionVector generate(SyntaxTree targetSyntaxTree) = 0;
 };

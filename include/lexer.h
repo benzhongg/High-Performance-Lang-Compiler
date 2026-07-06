@@ -7,8 +7,8 @@
 enum TokenType
 {
   // keyword tokens
-  KeywordInt,    // int
-  KeywordReturn, // return
+  KeywordInt, 
+  KeywordReturn,
 
   // literals
   Identifier,
@@ -27,12 +27,10 @@ enum TokenType
   RightCurlyBrace,
   Comma,
 
-  // EOF
   EndOfFile
 };
 
-inline std::map<std::string, TokenType> ReservedWords {{"int", TokenType::KeywordInt},
-                                                       {"return", TokenType::KeywordReturn}};
+inline std::map<std::string, TokenType> ReservedWords {{"int", TokenType::KeywordInt},{"return", TokenType::KeywordReturn}};
 
 using Lexeme   = std::string;
 using FileName = std::string;

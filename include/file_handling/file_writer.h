@@ -1,7 +1,8 @@
 #pragma once
+#include <cstdint>
 
-template <typename OT, typename IT> class FileWriterBase
+class FileWriterBase
 {
 public:
-  virtual std::vector<OT> write(std::vector<IT> inputVector) = 0;
+  virtual bool writeUInt32(std::uint32_t value) = 0;
 };
