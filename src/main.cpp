@@ -13,10 +13,7 @@ int main(int argc, char* argv[])
 {
   
   
-  std::string example_program = "#define hello 5\nint x = hello; \nint y = hello; \nstring s = \"hello world\"";
-  PreprocessorBase* preprocessor {new HPLCPreprocessor};
-  std::string processedOutputTest {preprocessor->preprocess(example_program)};
-  std::cout << processedOutputTest << std::endl;
+  
   
   // //step 1 preprocessing module
   // FileReaderBase*   fileReader {nullptr};
