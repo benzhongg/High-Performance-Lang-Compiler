@@ -1,6 +1,6 @@
 #pragma once
 #include "control_flow_graph.h"
-#include "instruction_generator.h"
+#include "HPLC/instruction_generator.h"
 
 // extendable to multiple intermediate instruction sets
 class OptimizerBase

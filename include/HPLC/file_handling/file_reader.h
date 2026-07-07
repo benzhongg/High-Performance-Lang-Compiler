@@ -14,4 +14,5 @@ public:
 
 class StreamFileReader : public FileReaderBase
 {
+  
 };
