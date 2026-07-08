@@ -10,7 +10,6 @@ class MacroResolverBase
 {
 public:
   virtual std::string resolve(std::string source_code) = 0;
-  virtual TokenVector resolve(TokenVector source_code_tokens) = 0;
 };
 
 using MacroResolverVector = std::vector<MacroResolverBase*>;
@@ -21,7 +20,7 @@ private:
   std::unordered_map<std::string, std::string> m_macroTable {};
 
 protected:
-  std::vector<std::string> split(std::string source_code)
+  std::vector<std::string> splitLines(std::string source_code)
   {
     std::vector<std::string> result {};
     std::stringstream        sstream {source_code};
@@ -99,7 +98,7 @@ public:
   std::string resolve(std::string source_code) override
   {
     std::string              result {""};
-    std::vector<std::string> lines_vector {split(source_code)};
+    std::vector<std::string> lines_vector {splitLines(source_code)};
 
     for (auto line : lines_vector)
     {
@@ -107,96 +106,5 @@ public:
     }
 
     return result;
-  }
-
-  TokenVector resolve(TokenVector source_code_tokens) override {}
-};
-
-struct TokenHasher {
-    std::size_t operator()(const Token& t) const noexcept {
-        return std::hash<int>{}(t.type) ^ (std::hash<std::string>{}(t.lexeme) << 1);
-    }
-};
-
-class DefineMacroResolverTokenApproach : public MacroResolverBase
-{
-private:
-
-  std::unordered_map<Token, Token, TokenHasher> m_macroTable {};
-
-protected:
-  void process(TokenVector& target_token_line)
-  {
-    if (target_token_line[0].type == DefineMacro)
-    {
-      addToMacroTable(target_token_line);
-    }
-    else 
-    {
-      applyMacros(target_token_line);
-    }
-  }
-
-  void addToMacroTable(TokenVector& target_token_line)
-  {
-    int size = target_token_line.size();
-    switch (size)
-    {
-      // we should probably throw errors instead of letting it pass in the future
-      case (1):
-      case (2):
-        target_token_line.clear();
-        break;
-      case (3):
-      case (4):
-        if (target_token_line[1].type == TokenType::Identifier && target_token_line[2].type == TokenType::Number)
-        {
-          m_macroTable[target_token_line[1]] = target_token_line[2];
-        }
-        break;
-    }
-    target_token_line.clear();
-  }
-
-  bool tokensMatch(Token target1, Token target2)
-  {
-    return target1.type == target2.type && target1.lexeme == target2.lexeme;
-  }
-  
-  void applyMacros(TokenVector& target_token_line)
-  {
-    for (Token& token : target_token_line)
-    {
-      for (auto macro : m_macroTable)
-      {
-        if (tokensMatch(token, macro.first))
-        {
-          token = macro.second;
-        }
-      }
-    }
-  }
-
-
-public:
-  std::string resolve(std::string source_code) override {}
-
-  TokenVector resolve(TokenVector source_code_tokens) override
-  {
-    //iterate over every token in the input TokenVector
-    TokenVector resultVector {};
-    TokenVector line {};    
-    for (auto token : source_code_tokens)
-    {
-      line.push_back(token);
-      if (token.type == TokenType::NewLine)
-      {
-        process(line);
-        resultVector.insert(resultVector.end(), line.begin(), line.end());
-        line.clear();
-      }
-    }      
-
-    return resultVector;
   }
 };
