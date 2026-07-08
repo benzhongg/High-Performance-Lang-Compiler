@@ -18,10 +18,10 @@ private:
   MacroResolverVector m_resolvers {};
 
 public:
-  HPLCPreprocessor() { m_resolvers.push_back(new DefineMacroResolverStringApproach()); }
+  HPLCPreprocessor() { m_resolvers.push_back(new DefineMacroResolver()); }
 
   ~HPLCPreprocessor() { m_resolvers.clear(); }
-  
+
   std::string preprocess(std::string source_code) override
   {
     for (auto resolver : m_resolvers)

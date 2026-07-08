@@ -1,10 +1,10 @@
 #pragma once
+#include "lexer.h"
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include "lexer.h"
 
 class MacroResolverBase
 {
@@ -14,10 +14,11 @@ public:
 
 using MacroResolverVector = std::vector<MacroResolverBase*>;
 
-class DefineMacroResolverStringApproach : public MacroResolverBase
+class DefineMacroResolver : public MacroResolverBase
 {
 private:
   std::unordered_map<std::string, std::string> m_macroTable {};
+  friend class TestDefineMacroResolver;
 
 protected:
   std::vector<std::string> splitLines(std::string source_code)
@@ -66,7 +67,7 @@ protected:
     }
     else
     {
-      result += applyMacros(source_code_line);
+      result += applyMacro(source_code_line);
     }
 
     return result;
@@ -74,37 +75,68 @@ protected:
 
   bool startsWithDefineMacro(std::string source_code_line)
   {
-    // this string target is ugly
     return source_code_line.starts_with("#define ");
   }
 
-  // TODO: refactor for double quotation 
-  //       implement test cases by injecting different lines
-  std::string applyMacros(std::string source_code_line)
+  bool containsStringLiteral(std::string source_code_line, size_t pos)
   {
-    // rename target_macro to macro_key
+    int quotation_count { 0 };
+    for (size_t x = pos ; x < source_code_line.length() ; ++x)
+    {
+      if (source_code_line[x] == '\"')
+      {
+        ++quotation_count;
+        if (quotation_count == 2) { return true; }
+      }
+    }
+
+    return false;
+  }
+
+  size_t positionOfNextDoubleQuote(std::string source_code_line, size_t pos)
+  {
+    return source_code_line.find("\"", pos);
+  }
+
+  std::string applyMacro(std::string source_code_line)
+  {
     for (auto& macro : m_macroTable)
     {
-      std::string target_macro = macro.first;
-      size_t      pos {0};
-      pos = source_code_line.find(target_macro, pos);
+      std::string macro_identifier = macro.first;
+      std::string macro_value = macro.second;
+      size_t      pos {source_code_line.find(macro_identifier, 0)};
+      
       if (pos == std::string::npos)
       {
         continue;
       }
-
-      //TODO: think about name
-      if (isString(source_code_line))
+      
+      int start { 0 };
+      int end { 0 };
+      
+      while ((pos = source_code_line.find(macro_identifier, pos)) != std::string::npos)
       {
-        int start = findStartOfString(source_code_line);
-        int end = findEndOfString(source_code_line);
         
-        while ((pos = source_code_line.find(target_macro, pos)) != std::string::npos)
+        if (containsStringLiteral(source_code_line, start))
         {
-          if (pos > start && pos < end) { continue; }
-          source_code_line.replace(pos, target_macro.length(), macro.second);
-          pos = macro.second.length();
+          start = positionOfNextDoubleQuote(source_code_line, start);
+          end   = positionOfNextDoubleQuote(source_code_line, start + 1);
         }
+        
+        bool is_within_quotes {false};
+        is_within_quotes = (pos > start && pos < end) ? true : false;
+        
+        if (!is_within_quotes) 
+        { 
+          source_code_line.replace(pos, macro_identifier.length(), macro_value);
+          pos += macro_value.length();
+        }
+        else
+        {
+          pos = end + 1;
+        }
+
+        start = pos;
       }
     }
     return source_code_line;
