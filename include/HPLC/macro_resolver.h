@@ -78,17 +78,33 @@ protected:
     return source_code_line.starts_with("#define ");
   }
 
+  // TODO: refactor for double quotation 
+  //       implement test cases by injecting different lines
   std::string applyMacros(std::string source_code_line)
   {
-    for (auto macro : m_macroTable)
+    // rename target_macro to macro_key
+    for (auto& macro : m_macroTable)
     {
       std::string target_macro = macro.first;
       size_t      pos {0};
-
-      while ((pos = source_code_line.find(target_macro, pos)) != std::string::npos)
+      pos = source_code_line.find(target_macro, pos);
+      if (pos == std::string::npos)
       {
-        source_code_line.replace(pos, target_macro.length(), macro.second);
-        pos = macro.second.length();
+        continue;
+      }
+
+      //TODO: think about name
+      if (isString(source_code_line))
+      {
+        int start = findStartOfString(source_code_line);
+        int end = findEndOfString(source_code_line);
+        
+        while ((pos = source_code_line.find(target_macro, pos)) != std::string::npos)
+        {
+          if (pos > start && pos < end) { continue; }
+          source_code_line.replace(pos, target_macro.length(), macro.second);
+          pos = macro.second.length();
+        }
       }
     }
     return source_code_line;
