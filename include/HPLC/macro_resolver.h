@@ -63,6 +63,7 @@ protected:
     else
     {
       result += applyMacro(source_code_line);
+      result += '\n';
     }
 
     return result;
