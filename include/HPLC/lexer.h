@@ -8,7 +8,7 @@
 class LexerBase
 {
 public:
-  virtual TokenVector tokenize() = 0;
+  virtual TokenVector tokenize(SourceCode input_source_code) = 0;
 };
 
 using word = std::string;
@@ -18,36 +18,38 @@ class HPLCLexer : public LexerBase
 private:
   int               m_line {1};
   int               m_column {0};
-  // TODO: later file name implementation
-  std::string       m_fileName {"helloworld.hplc"};
+  std::string       m_fileName {""};
   TokenVector       m_resultVector {};
-  std::stringstream m_fileStream {};
+  std::stringstream m_stringStream {};
 
 protected:
   const word getWord()
   {
     char ch;
 
-    if (!m_fileStream.get(ch))
+    if (!m_stringStream.get(ch))
     {
       return "\0";
     }
 
-    // If it's a newline, return it immediately so tokenize() can increment m_line
     if (ch == '\n')
     {
       return "\n";
     }
+    
+    if (ch == ';')
+    {
+      return ";";
+    }
 
-    // Skip horizontal whitespace (spaces, tabs) but track columns
     while (ch == ' ' || ch == '\t')
     {
       if (ch == ' ')
         m_column++;
       else if (ch == '\t')
-        m_column += 4; // Or whatever your tab width is
+        m_column += 4;
 
-      if (!m_fileStream.get(ch))
+      if (!m_stringStream.get(ch))
       {
         return "\0";
       }
@@ -57,27 +59,22 @@ protected:
       }
     }
 
-    // Now build the actual token word
     word result_word {};
     result_word += ch;
 
-    // Keep reading characters until we hit a delimiter (space, newline, or operator)
-    // Note: You may want to customize what separates a "word" based on your language syntax
-    while (m_fileStream.peek() != EOF)
+    while (m_stringStream.peek() != EOF)
     {
-      char next = m_fileStream.peek();
+      char next = m_stringStream.peek();
 
-      // Break if we hit a delimiter
       if (next == ' ' || next == '\t' || next == '\n' || next == '=' || next == '+' || next == ';' || next == '(' ||
           next == ')' || next == '{' || next == '}')
       {
         break;
       }
 
-      m_fileStream.get(ch);
+      m_stringStream.get(ch);
       result_word += ch;
     }
-
     return result_word;
   }
 
@@ -91,7 +88,10 @@ protected:
     return std::all_of(word.begin(), word.end(), [](unsigned char c) { return std::isalpha(c); });
   }
 
-  bool isStringLiteral(word word) { return (*word.begin() == '\"' && *word.end() == '\"'); }
+  bool isStringLiteral(word word) 
+  {
+    return (word.front() == '\"' && word.back() == '\"'); 
+  }
 
   Token generateToken(word input_word)
   {
@@ -109,7 +109,7 @@ protected:
       m_column = 0;
     }
 
-    if (isNumber(input_word))
+    else if (isNumber(input_word))
     {
       result_token = createToken(TokenType::Number, input_word);
     }
@@ -186,10 +186,13 @@ protected:
   }
 
 public:
-  HPLCLexer(std::string source_code) { m_fileStream.str(source_code); }
+  HPLCLexer() = default;
 
-  TokenVector tokenize() override
+  TokenVector tokenize(SourceCode source_code) override
   {
+    m_stringStream.str(source_code.contents);
+    m_fileName = source_code.name;
+    
     word current_word {};
 
     while ((current_word = getWord()) != "\0")
