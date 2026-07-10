@@ -1,70 +1,9 @@
 #pragma once
-#include <algorithm>
-#include <cctype>
 #include <fstream>
-#include <iostream>
-#include <map>
 #include <sstream>
-#include <string>
-#include <vector>
+#include "HPLC/source_code.h"
+#include "HPLC/token.h"
 
-enum TokenType
-{
-  // keyword tokens
-  KeywordInt,    // int
-  KeywordString, // string
-  KeywordReturn, // return
-
-  // literals
-  Identifier,
-  Number,
-  String,
-
-  // single character tokens
-  Assign,
-  Plus,
-  Minus,
-  Star,
-  Slash,
-  Semicolon,
-  LeftParanthesis,
-  RightParanthesis,
-  LeftCurlyBrace,
-  RightCurlyBrace,
-  Comma,
-
-  NewLine,
-  EndOfFile
-};
-
-inline std::map<std::string, TokenType> ReservedWords {{"int", TokenType::KeywordInt},
-                                                       {"return", TokenType::KeywordReturn}};
-
-using Lexeme   = std::string;
-using FileName = std::string;
-
-struct Token
-{
-  TokenType type {};
-  Lexeme    lexeme {};
-  int       column {};
-  int       row {};
-  FileName  fileName {};
-
-  Token() = default;
-
-  Token(TokenType t, Lexeme l, int c, int r, FileName fn) : type {t}, lexeme {l}, column {c}, row {r}, fileName {fn} {}
-
-  void print()
-  {
-    std::cout << "TokenType: " << type << " | Lexeme: " << lexeme << " | Column: " << column << " | Row: " << row
-              << " | FileName: " << fileName << std::endl;
-  }
-
-  bool operator==(const Token& other) const = default;
-};
-
-using TokenVector = std::vector<Token>;
 
 class LexerBase
 {

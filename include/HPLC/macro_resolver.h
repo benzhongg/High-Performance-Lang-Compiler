@@ -1,10 +1,5 @@
 #pragma once
 #include "lexer.h"
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <unordered_map>
-#include <vector>
 
 class MacroResolverBase
 {
