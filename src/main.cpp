@@ -1,4 +1,3 @@
-#include <iostream>
 #include "HPLC/bytecode_generator.h"
 #include "HPLC/file_handling/file_reader.h"
 #include "HPLC/instruction_generator.h"
@@ -8,6 +7,7 @@
 #include "HPLC/parser.h"
 #include "HPLC/preprocessor.h"
 #include "HPLC/semantic_analyzer.h"
+#include "HPLC/source_code.h"
 
 int main(int argc, char* argv[])
 {
