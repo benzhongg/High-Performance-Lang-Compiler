@@ -1,34 +1,30 @@
-#include "HPLC/bytecode_generator.h"
-#include "HPLC/file_handling/file_reader.h"
-#include "HPLC/instruction_generator.h"
-#include "HPLC/lexer.h"
-#include "HPLC/macro_resolver.h"
-#include "HPLC/optimization/optimizer.h"
-#include "HPLC/parser.h"
 #include "HPLC/preprocessor.h"
-#include "HPLC/semantic_analyzer.h"
-#include "HPLC/source_code.h"
+#include "HPLC/lexer.h"
 
 int main(int argc, char* argv[])
 {
-  std::string program_string {"int x = 5 \n int y = 10 \n"};
-  TokenVector result_vector {};
-  HPLCLexer test_lexer(program_string);
-  result_vector = test_lexer.tokenize();
-  for (auto token : result_vector)
+  // step 0 file reader module and source code obj construction
+  FileReaderBase* file_reader {new StreamFileReader()};
+  if (!file_reader->openFile("data/simple_example_1.hplc"))
+  {
+    // TODO: temp solution return to this
+    std::cout << "invalid file path" << std::endl;
+    return 0;
+  }
+  SourceCode source_code = file_reader->readAll();
+
+  // step 1 preprocessing module
+  PreprocessorBase* preprocessor {new HPLCPreprocessor()};
+  SourceCode        preprocessed_source_code = preprocessor->preprocess(source_code);
+  std::cout << preprocessed_source_code.contents;
+
+  // step 2 lexer module
+  LexerBase* lexer {new HPLCLexer()};
+  TokenVector lexed_token_vector {lexer->tokenize(preprocessed_source_code)};
+  for (auto& token : lexed_token_vector)
   {
     token.print();
   }
-  
-  // //step 1 preprocessing module
-  // FileReaderBase*   fileReader {nullptr};
-  // PreprocessorBase* preprocessor {new HPLCPreprocessor()};
-  // std::string       processedOutput {preprocessor->preprocess(fileReader->readAll())};
-  
-  // // step 2 lexer module 
-  // LexerBase*  lexer {new HPLCLexer()};
-  // TokenVector tokenVector {lexer->tokenize(processedOutput)};
-
   // // step 3 parser module
   // ParserBase* parser {nullptr};
   // SyntaxTree  syntaxTree {parser->parse(tokenVector)};
