@@ -1,0 +1,3 @@
+string test = "hello world";
+string test = "hello" + "hello";
+string test = "hello" + hello + "hello";

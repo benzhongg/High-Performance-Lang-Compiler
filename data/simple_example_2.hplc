@@ -1,9 +1,5 @@
 #define hello 5
 int x = hello;
-
-
 int y = 123;
-
-string test = "123abc";
-
+string test = "hello";
 int y = hello + hello;
