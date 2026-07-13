@@ -9,6 +9,7 @@
 
 enum TokenType
 {
+  Unknown,
   // keyword tokens
   KeywordInt,    // int
   KeywordString, // string
@@ -43,11 +44,11 @@ using Lexeme   = std::string;
 
 struct Token
 {
-  TokenType type {};
-  Lexeme    lexeme {};
-  int       column {};
-  int       row {};
-  FileName  fileName {};
+  TokenType type { TokenType::Unknown };
+  Lexeme    lexeme { "" };
+  int       column { 0 };
+  int       row { 0 };
+  FileName  fileName { "" };
 
   Token() = default;
 

@@ -15,12 +15,12 @@ int main(int argc, char* argv[])
 
   // step 1 preprocessing module
   PreprocessorBase* preprocessor {new HPLCPreprocessor()};
-  SourceCode        preprocessed_source_code = preprocessor->preprocess(source_code);
-  std::cout << preprocessed_source_code.contents;
+  preprocessor->preprocess(source_code);
+  std::cout << source_code.contents;
 
   // step 2 lexer module
   LexerBase* lexer {new HPLCLexer()};
-  TokenVector lexed_token_vector {lexer->tokenize(preprocessed_source_code)};
+  TokenVector lexed_token_vector {lexer->tokenize(source_code)};
   for (auto& token : lexed_token_vector)
   {
     token.print();

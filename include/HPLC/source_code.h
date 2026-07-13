@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 using Program = std::string;
 using FileName = std::string;

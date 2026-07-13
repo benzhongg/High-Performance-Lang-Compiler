@@ -8,7 +8,7 @@
 class PreprocessorBase
 {
 public:
-  virtual SourceCode preprocess(SourceCode input_source_code) = 0;
+  virtual void preprocess(SourceCode& input_source_code) = 0;
   virtual ~PreprocessorBase() {}
 };
 
@@ -26,15 +26,14 @@ public:
 
   ~HPLCPreprocessor() { m_resolvers.clear(); }
 
-  SourceCode preprocess(SourceCode source_code) override
+  //removed pass by val
+  //turned return type to void
+  //removed copy constructor of a result string in function def
+  void preprocess(SourceCode& source_code) override
   {
-    SourceCode result_source_code = source_code;
-
     for (auto resolver : m_resolvers)
     {
-      result_source_code.contents = resolver->resolve(result_source_code.contents);
+      resolver->resolve(source_code.contents);
     }
-
-    return result_source_code;
   }
 };

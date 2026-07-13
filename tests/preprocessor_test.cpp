@@ -8,8 +8,8 @@ TEST(PreprocessorModule, PreprocessingDefineMacro)
       "#define hello 5\nint x = hello; \nint y = hello; \nstring s = \"hello world\"; \nint z = hello + hello;";
   SourceCode        test_source_code {"test", example_program};
   PreprocessorBase* preprocessor {new HPLCPreprocessor()};
-  SourceCode        test_preprocessed_source_code {preprocessor->preprocess(test_source_code)};
-  ASSERT_EQ(test_preprocessed_source_code.contents, "int x = 5; int y = 5; string s = \"hello world\"; int z = 5 + 5;");
+  preprocessor->preprocess(test_source_code);
+  ASSERT_EQ(test_source_code.contents, "int x = 5; int y = 5; string s = \"hello world\"; int z = 5 + 5;");
 }
 
 class TestDefineMacroResolver : public DefineMacroResolver
@@ -19,7 +19,8 @@ public:
 
   bool testApplyMacro(std::string source_code_line, std::string expected_output)
   {
-    return this->applyMacro(source_code_line) == expected_output;
+    this->applyMacro(source_code_line);
+    return source_code_line == expected_output;
   }
 };
 

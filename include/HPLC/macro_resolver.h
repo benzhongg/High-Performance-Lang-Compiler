@@ -4,7 +4,7 @@
 class MacroResolverBase
 {
 public:
-  virtual std::string resolve(std::string source_code) = 0;
+  virtual void resolve(std::string& source_code) = 0;
 };
 
 using MacroResolverVector = std::vector<MacroResolverBase*>;
@@ -16,7 +16,9 @@ private:
   friend class TestDefineMacroResolver;
 
 protected:
-  std::vector<std::string> splitLines(std::string source_code)
+  
+  // we can make this const string ref since we're only reading and not modifying
+  std::vector<std::string> splitLines(const std::string& source_code)
   {
     std::vector<std::string> result {};
     std::stringstream        sstream {source_code};
@@ -30,7 +32,8 @@ protected:
     return result;
   }
 
-  void addMacroToTable(std::string source_code_line)
+  // pass by ref instead of pass by val
+  void addMacroToTable(std::string& source_code_line)
   {
     std::vector<std::string> split_lines {};
     std::istringstream       iss {source_code_line};
@@ -52,29 +55,35 @@ protected:
     }
   }
 
-  std::string process(std::string source_code_line)
+  // copy occuring at parameter passing
+  // copy occuring at function return
+  // and copy occurs inside from result = applyMacro
+  // improvement we've reduced it to 2 copies
+  
+  // one copy at return
+  void process(std::string& source_code_line)
   {
-    std::string result {""};
-
     if (startsWithDefineMacro(source_code_line))
     {
       addMacroToTable(source_code_line);
     }
     else
     {
-      result += applyMacro(source_code_line);
-      result += '\n';
+      applyMacro(source_code_line);
+      source_code_line += '\n';
     }
-
-    return result;
   }
 
-  bool startsWithDefineMacro(std::string source_code_line)
+  // refactored to pass by ref
+    // saved memory allocation
+    // saved copy constructor
+    // saved obj destructor 
+  bool startsWithDefineMacro(std::string& source_code_line)
   {
     return source_code_line.starts_with("#define ");
   }
 
-  bool containsStringLiteral(std::string source_code_line, size_t pos)
+  bool containsStringLiteral(std::string& source_code_line, size_t pos)
   {
     int quotation_count { 0 };
     for (size_t x = pos ; x < source_code_line.length() ; ++x)
@@ -89,12 +98,12 @@ protected:
     return false;
   }
 
-  size_t positionOfNextDoubleQuote(std::string source_code_line, size_t pos)
+  size_t positionOfNextDoubleQuote(std::string& source_code_line, size_t pos)
   {
     return source_code_line.find("\"", pos);
   }
 
-  std::string applyMacro(std::string source_code_line)
+  void applyMacro(std::string& source_code_line)
   {
     for (auto& macro : m_macroTable)
     {
@@ -135,20 +144,24 @@ protected:
         start = pos;
       }
     }
-    return source_code_line;
   }
 
 public:
-  std::string resolve(std::string source_code) override
+
+  // originally there were 3 copy constructors happening, one at the function call, one inside function, and return 
+  // a simple refactor will remove two copy constructor we can optimize this even further
+  void resolve(std::string& source_code) override
   {
     std::string              result {""};
     std::vector<std::string> lines_vector {splitLines(source_code)};
 
-    for (auto line : lines_vector)
+    for (auto& line : lines_vector)
     {
-      result += process(line);
+      process(line);
+      result += line;
+      std::cout << line << std::endl;
     }
-
-    return result;
+    
+    source_code = result;
   }
 };
