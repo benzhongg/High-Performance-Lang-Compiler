@@ -85,12 +85,14 @@ protected:
 
   bool isAlpha(word word)
   {
-    return std::all_of(word.begin(), word.end(), [](unsigned char c) { return std::isalpha(c); });
+    if (std::isdigit(word[0])) { return false; }
+
+    return true;
   }
 
   bool isStringLiteral(word word) 
   {
-    return (word.front() == '\"' && word.back() == '\"'); 
+    return (word.front() == '\"' && word.back() == '\"');  
   }
 
   Token generateToken(word input_word)
@@ -102,45 +104,17 @@ protected:
     TokenType current_token_type {};
     Token     result_token {};
 
-    if (input_word == "\n")
-    {
-      result_token = createToken(TokenType::NewLine, input_word);
-      m_line++;
-      m_column = 0;
-    }
+    
 
-    else if (isNumber(input_word))
+    if (input_word.length() == 1)
     {
-      result_token = createToken(TokenType::Number, input_word);
-    }
-
-    else if (isStringLiteral(input_word))
-    {
-      result_token = createToken(TokenType::String, input_word);
-    }
-
-    else if (isAlpha(input_word))
-    {
-      if (input_word == "int")
+      if (input_word == "\n")
       {
-        result_token = createToken(TokenType::KeywordInt, input_word);
+        result_token = createToken(TokenType::NewLine, input_word);
+        m_line++;
+        m_column = 0;
       }
-      else if (input_word == "return")
-      {
-        result_token = createToken(TokenType::KeywordReturn, input_word);
-      }
-      else if (input_word == "string")
-      {
-        result_token = createToken(TokenType::KeywordString, input_word);
-      }
-      else
-      {
-        result_token = createToken(TokenType::Identifier, input_word);
-      }
-    }
-    else if (input_word.length() == 1)
-    {
-      if (input_word == "=")
+      else if (input_word == "=")
       {
         result_token = createToken(TokenType::Assign, input_word);
       }
@@ -181,7 +155,39 @@ protected:
         result_token = createToken(TokenType::Comma, input_word);
       }
     }
+    
+    else if (isNumber(input_word))
+    {
+      result_token = createToken(TokenType::Number, input_word);
+    }
+
+    else if (isStringLiteral(input_word))
+    {
+      result_token = createToken(TokenType::String, input_word);
+    }
+    
+    else if (isAlpha(input_word))
+    {
+      if (input_word == "int")
+      {
+        result_token = createToken(TokenType::KeywordInt, input_word);
+      }
+      else if (input_word == "return")
+      {
+        result_token = createToken(TokenType::KeywordReturn, input_word);
+      }
+      else if (input_word == "string")
+      {
+        result_token = createToken(TokenType::KeywordString, input_word);
+      }
+      else
+      {
+        result_token = createToken(TokenType::Identifier, input_word);
+      }
+    }
+    
     m_column += input_word.length();
+    //place exception here (1)
     return result_token;
   }
 
