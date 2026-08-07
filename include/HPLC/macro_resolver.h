@@ -4,7 +4,8 @@
 #include <sstream>
 #include <stdexcept>
 #include <utility>
-
+#include <vector>
+#include <unordered_map>
 class MacroResolverBase
 {
 public:
