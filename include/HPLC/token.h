@@ -1,19 +1,21 @@
 #pragma once
-#include <unordered_map>
-#include <string>
 #include "HPLC/source_code.h"
-#include <vector>
-#include <iostream>
-#include <cctype>
 #include <algorithm>
+#include <cctype>
+#include <iostream>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
-enum TokenType
+
+
+enum class TokenType
 {
   Unknown,
-  // keyword tokens
-  KeywordInt,    // int
-  KeywordString, // string
-  KeywordReturn, // return
+
+  KeywordInt,    
+  KeywordString, 
+  KeywordReturn, 
 
   // literals
   Identifier,
@@ -34,31 +36,31 @@ enum TokenType
   Comma,
 
   NewLine,
+
   EndOfFile
 };
 
-inline std::unordered_map<std::string, TokenType> ReservedWords {{"int", TokenType::KeywordInt},
-                                                       {"return", TokenType::KeywordReturn}};
+inline std::unordered_map<std::string, TokenType> ReservedWords
+{
+  {"int", TokenType::KeywordInt},
+  {"return", TokenType::KeywordReturn}
+};
 
-using Lexeme   = std::string;
+using Lexeme = std::string;
 
 struct Token
 {
-  TokenType type { TokenType::Unknown };
-  Lexeme    lexeme { "" };
-  int       column { 0 };
-  int       row { 0 };
-  FileName  fileName { "" };
+  TokenType type {TokenType::Unknown};
+  Lexeme    lexeme;
+  int       column {0};
+  int       row {0};
+  FileName  fileName;
 
   Token() = default;
 
   Token(TokenType t, Lexeme l, int c, int r, FileName fn) : type {t}, lexeme {l}, column {c}, row {r}, fileName {fn} {}
 
-  void print()
-  {
-    std::cout << "TokenType: " << type << " | Lexeme: " << lexeme << " | Column: " << column << " | Row: " << row
-              << " | FileName: " << fileName << std::endl;
-  }
+  void print();
 
   bool operator==(const Token& other) const = default;
 };
