@@ -19,6 +19,15 @@ int main(int argc, char* argv[])
   // step 2 lexer module 
   LexerBase*  lexer {new HPLCLexer()};
   TokenVector tokenVector {lexer->tokenize(processedOutput)};
+  
+  // //step 1 preprocessing module
+  // FileReaderBase*   fileReader {nullptr};
+  // PreprocessorBase* preprocessor {nullptr};
+  // std::string       processedOutput {preprocessor->preprocess(fileReader->readAll())};
+  
+  // // step 2 lexer module
+  // LexerBase*  lexer {nullptr};
+  // TokenVector tokenVector {lexer->tokenize(processedOutput)};
 
   // step 3 parser module
   ParserBase* parser {nullptr};
