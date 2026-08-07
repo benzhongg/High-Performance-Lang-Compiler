@@ -1,0 +1,6 @@
+#define hello 5
+int x = hello;
+int y = 123;
+string test = "hello";
+int y = hello + hello;
+string test2 = "hello" + hello + "hello"

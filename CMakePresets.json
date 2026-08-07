@@ -1,0 +1,59 @@
+{
+	"version": 6,
+	"cmakeMinimumRequired":
+	{
+		"major": 3,
+		"minor": 28,
+		"patch": 0
+	},
+	"configurePresets":
+	[
+		{
+			"name": "base",
+			"hidden": true,
+			"generator": "Ninja",
+			"binaryDir": "${sourceDir}/build/${presetName}",
+			"cacheVariables": 
+			{
+				"CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+				"CMAKE_CXX_STANDARD": "20",
+				"CMAKE_CXX_STANDARD_REQUIRED": "ON",
+				"CMAKE_CXX_EXTENSION": "OFF"
+			}
+		},
+		{
+			"name": "dev-clang-debug",
+			"displayName": "Clang Debug + Sanitizers",
+			"inherits": "base",
+			"cacheVariables": 
+			{
+				"CMAKE_CXX_COMPILER": "clang++",
+				"CMAKE_C_COMPILER": "clang",
+				"CMAKE_BUILD_TYPE": "Debug",
+				"ENABLE_SANITIZERS": "ON"
+			}
+		},
+		{
+			"name": "dev-gcc-release",
+			"displayName": "GCC Release Optimized",
+			"inherits": "base",
+			"cacheVariables": 
+			{
+				"CMAKE_CXX_COMPILER": "g++",
+				"CMAKE_C_COMPILER": "gcc",
+				"CMAKE_BUILD_TYPE": "Release"
+			}
+		}
+	],
+	"buildPresets": 
+	[
+		{
+			"name": "debug",
+			"configurePreset": "dev-clang-debug"
+		},
+		{
+			"name": "release",
+			"configurePreset": "dev-gcc-release"
+		}
+	]
+}

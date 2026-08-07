@@ -1,6 +1,6 @@
 #pragma once
-#include "instruction.h"
 #include <cstdint>
+#include "instruction.h"
 
 class ByteCodeGeneratorBase
 {

@@ -1,109 +1,40 @@
 #pragma once
-#include <iostream>
+#include "lexer.h"
+#include <fstream>
 #include <sstream>
-#include <string>
-#include <unordered_map>
+#include <stdexcept>
+#include <utility>
 #include <vector>
-
+#include <unordered_map>
 class MacroResolverBase
 {
 public:
-  virtual std::string resolve(std::string source_code) = 0;
+  virtual void resolve(std::string& source_code) = 0;
 };
 
 using MacroResolverVector = std::vector<MacroResolverBase*>;
 
-class DefineMacroResolverStringApproach : public MacroResolverBase
+class DefineMacroResolver : public MacroResolverBase
 {
-private:
-  std::unordered_map<std::string, std::string> m_macroTable {};
+public:
+  void resolve(std::string& source_code) override;
 
 protected:
-  std::vector<std::string> split(std::string source_code)
-  {
-    std::vector<std::string> result {};
-    std::stringstream        sstream {source_code};
+  std::vector<std::string> splitLines(const std::string& source_code);
 
-    std::string line {};
-    while (std::getline(sstream, line))
-    {
-      result.push_back(line);
-    }
+  void addMacroToTable(std::string& source_code_line);
 
-    return result;
-  }
+  void process(std::string& source_code_line);
 
-  void addMacroToTable(std::string source_code_line)
-  {
-    std::vector<std::string> split_lines {};
-    std::istringstream       iss {source_code_line};
-    std::string              word {};
-    while (std::getline(iss, word, ' '))
-    {
-      split_lines.push_back(word);
-    }
+  bool startsWithDefineMacro(std::string& source_code_line);
 
-    switch (split_lines.size())
-    {
-    case 1:
-      break;
-    case 2:
-      break;
-    case 3:
-      m_macroTable[split_lines[1]] = split_lines[2];
-      break;
-    }
-  }
+  bool containsStringLiteral(const std::string& source_code_line, size_t pos);
 
-  std::string process(std::string source_code_line)
-  {
-    std::string result {""};
+  size_t positionOfNextDoubleQuote(const std::string& source_code_line, size_t pos);
 
-    if (startsWithDefineMacro(source_code_line))
-    {
-      addMacroToTable(source_code_line);
-    }
-    else
-    {
-      result += applyMacros(source_code_line);
-    }
+  void applyMacro(std::string& source_code_line);
 
-    return result;
-  }
-
-  bool startsWithDefineMacro(std::string source_code_line)
-  {
-    // this string target is ugly
-    return source_code_line.starts_with("#define ");
-  }
-
-  std::string applyMacros(std::string source_code_line)
-  {
-    for (auto macro : m_macroTable)
-    {
-      std::string target_macro = macro.first;
-      size_t      pos {0};
-
-      while ((pos = source_code_line.find(target_macro, pos)) != std::string::npos)
-      {
-        source_code_line.replace(pos, target_macro.length(), macro.second);
-        pos = macro.second.length();
-      }
-    }
-    return source_code_line;
-  }
-
-public:
-  std::string resolve(std::string source_code) override
-  {
-    std::string              result {""};
-    std::vector<std::string> lines_vector {split(source_code)};
-
-    for (auto line : lines_vector)
-    {
-      result += process(line);
-    }
-
-    return result;
-  }
+private:
+  std::unordered_map<std::string, std::string> m_macroTable {};
+  friend class TestDefineMacroResolver;
 };
