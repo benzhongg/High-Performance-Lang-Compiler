@@ -5,7 +5,7 @@ int main(int argc, char* argv[])
 {
   // step 0 file reader module and source code obj construction
   FileReaderBase* file_reader {new StreamFileReader()};
-  if (!file_reader->openFile("data/simple_example_1.hplc"))
+  if (!file_reader->openFile("data/simple_example_0.hplc"))
   {
     // TODO: temp solution return to this
     std::cout << "invalid file path" << std::endl;
@@ -25,8 +25,9 @@ int main(int argc, char* argv[])
   {
     token.print();
   }
+  
   // // step 3 parser module
-  // ParserBase* parser {nullptr};
+  // ParserBase* parser { new HPLCParser () };
   // SyntaxTree  syntaxTree {parser->parse(tokenVector)};
 
   // // step 4 semantic analysis module
