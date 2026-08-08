@@ -2,7 +2,7 @@
 #include <exception>
 #include <fstream>
 #include <string>
-#include "HPLC/source_code.h"
+#include "../source_code.h"
 
 class FileReaderBase
 {
@@ -62,11 +62,10 @@ public:
 
   SourceCode readAll() override
   {
-    std::string program_string{};
-    std::string line{};
-    while(m_fileStream)
+    std::string program_string;
+    std::string line;
+    while(std::getline(m_fileStream, line))
     {
-      std::getline(m_fileStream, line);
       program_string.append(line);
       program_string.push_back('\n');
     }
