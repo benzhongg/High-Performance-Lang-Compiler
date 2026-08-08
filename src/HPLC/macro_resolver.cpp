@@ -12,7 +12,6 @@ void DefineMacroResolver::resolve(std::string& source_code)
   {
     process(line);
     result += line;
-    std::cout << line << std::endl;
   }
 
   source_code = result;
@@ -20,10 +19,10 @@ void DefineMacroResolver::resolve(std::string& source_code)
 
 std::vector<std::string> DefineMacroResolver::splitLines(const std::string& source_code)
 {
-  std::vector<std::string> result {};
+  std::vector<std::string> result;
   std::stringstream        sstream {source_code};
 
-  std::string line {""};
+  std::string line;
   while (std::getline(sstream, line))
   {
     result.push_back(line);
@@ -32,7 +31,6 @@ std::vector<std::string> DefineMacroResolver::splitLines(const std::string& sour
   return result;
 }
 
-// pass by ref instead of pass by val
 void DefineMacroResolver::addMacroToTable(std::string& source_code_line)
 {
   std::vector<std::string> split_lines {};
@@ -58,12 +56,6 @@ void DefineMacroResolver::addMacroToTable(std::string& source_code_line)
   std::unreachable();
 }
 
-// copy occuring at parameter passing
-// copy occuring at function return
-// and copy occurs inside from result = applyMacro
-// improvement we've reduced it to 2 copies
-
-// one copy at return
 void DefineMacroResolver::process(std::string& source_code_line)
 {
   if (startsWithDefineMacro(source_code_line))
@@ -77,10 +69,6 @@ void DefineMacroResolver::process(std::string& source_code_line)
   }
 }
 
-// refactored to pass by ref
-// saved memory allocation
-// saved copy constructor
-// saved obj destructor
 bool DefineMacroResolver::startsWithDefineMacro(std::string& source_code_line)
 {
   return source_code_line.starts_with("#define ");
