@@ -36,6 +36,21 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googlebenchmark)
 
+FetchContent_Declare(
+	tree_sitter
+	GIT_REPOSITORY https://github.com/tree-sitter/tree-sitter.git
+	GIT_TAG v0.22.6
+	SOURCE_SUBDIR lib
+)
+FetchContent_MakeAvailable(tree_sitter)
+
+FetchContent_Declare(
+	cpp_tree_sitter
+	GIT_REPOSITORY https://github.com/nsumner/cpp-tree-sitter.git
+	GIT_TAG main
+)
+FetchContent_MakeAvailable(cpp_tree_sitter)
+
 add_subdirectory(src)
 add_subdirectory(test)
 add_subdirectory(app)
