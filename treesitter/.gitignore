@@ -1,0 +1,7 @@
+.editorconfig
+.gitattributes
+Makefile
+package.json
+tree-sitter.json
+alloc.h
+array.h

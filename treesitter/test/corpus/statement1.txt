@@ -1,0 +1,102 @@
+============================
+Assignment integer example 1
+============================
+
+int a = 1
+int b = a
+int c = a + b + 2
+
+---
+
+(program_file
+    (assignment
+        (variable_type)
+        (identifier)
+        (number_literal)
+    )
+    (assignment
+        (variable_type)
+        (identifier)
+        (identifier)
+    )
+    (assignment
+        (variable_type)
+        (identifier)
+        (binaryexpression
+            (binaryexpression
+                (identifier)
+                (identifier)
+            )
+            (number_literal)
+        )
+    )
+)
+
+===========================
+Assignment string example 1
+===========================
+
+string test = "hello world"
+string abc  = "124asdf"
+string ab1  = "as1"
+string bot  = test + "goodbye"
+
+---
+
+(program_file
+  (assignment
+    (variable_type)
+    (identifier)
+    (string_literal))
+  (assignment
+    (variable_type)
+    (identifier)
+    (string_literal))
+  (assignment
+    (variable_type)
+    (identifier)
+    (string_literal))
+  (assignment
+    (variable_type)
+    (identifier)
+    (binaryexpression
+      (identifier)
+      (string_literal))))
+
+=========================
+Statement print example 1
+=========================
+
+print(test)
+print("a")
+print(ab1)
+print(test + ab1)
+print(test + ab1 + "abc")
+---
+
+(program_file
+    (print
+        (identifier)
+    )
+    (print
+        (string_literal)
+    )
+    (print
+        (identifier)
+    )
+    (print
+        (binaryexpression
+            (identifier)
+            (identifier)
+        )
+    )
+    (print
+        (binaryexpression
+            (binaryexpression
+                (identifier)
+                (identifier)
+            )
+            (string_literal)
+        )
+    )
+)

@@ -1,4 +1,10 @@
-module.exports = grammar({
+const PREC = {
+    ASSIGN: 1,
+    ADD: 2,
+    MULTIPLY: 3
+};
+
+export default grammar({
     name: 'HPLC',
 
     rules: {
@@ -7,78 +13,70 @@ module.exports = grammar({
 
         _statement: $ => choice
         (
-            $._preprocessor,
-            $._assignment,
-            $._binaryexpression,
-            $._print
+            $.preprocessor,
+            $.assignment,
+            $.binaryexpression,
+            $.print
         ),
 
-        _preprocessor: $ => seq
+        preprocessor: $ => seq
         (
             '#',
-            $._macro,
-            $._value
+            field('macro', $.macro),
+            field('value', $.number_literal)
         ),
 
-        _assignment: $ => seq 
+        assignment: $ => seq 
         (
-            $._variableType,
-            $._operand,
+            field('type', $.variable_type),
+            field('operand', $.identifier),
             '=',
-            choice($._literal, $._binaryexpression)
+            field('value', choice($._literal, $.binaryexpression, $.identifier))
         ),
 
-        _binaryexpression: $ => seq
+        binaryexpression: $ => choice
         (
-            choice($._literal, $._binaryexpression, $._identifier),
-            ('=', '+', '-', '/'),
-            choice($._literal, $._binaryexpression, $._identifier),
+            
+            prec.left(PREC.ADD, seq
+                (
+                    field('left', choice($._literal, $.binaryexpression, $.identifier)),
+                    field('operator', choice('+', '-')),
+                    field('right', choice($._literal, $.binaryexpression, $.identifier)),
+                )
+            ),
+            prec.left(PREC.MULTIPLY, seq
+                (
+                    field('left', choice($._literal, $.binaryexpression, $.identifier)),
+                    field('operator', choice('+', '-')),
+                    field('right', choice($._literal, $.binaryexpression, $.identifier)),
+                )
+            )
         ),
 
-        _print: $ => seq
+        print: $ => seq
         (
-            ('print('),
-            choice($._literal, $._binaryexpression, $._identifier),
+            ('print'),
+            ('('),
+            field('argument', choice($._literal, $.binaryexpression, $.identifier)),
             (')')
         ),
 
-        _literal: $ =>
-        {
-            choice($._numberliteral, $._stringliteral)
-        },  
-
-        _stringliteral: $ => seq
+        _literal: $ => choice
         (
-            '\"',
-            [a-z],
-            repeat
-            (
-                repeat(choice([a-z][A-Z])),
-                repeat($._numberliteral)
-            ),
-            '\"',
+            $.number_literal,
+            $.string_literal
         ),
+
+        string_literal: $ => seq('"', optional(/[^"]*/), '"'),
         
-        _variableType: $ => choice
+        variable_type: $ => choice
         (
             'int',
             'string'
         ),
         
-        _operand: $ => seq
-        (
-            [a-z],
-            repeat
-            (
-                repeat(choice([a-z][A-Z])),
-                repeat($._numberliteral)
-            )
-        ),
-        
-        _numberliteral: $ => /\d+/,
-        _macro:         $ => 'define',
-        _value:         $ => $._numberliteral,
-        _identifier:    $ => $._operand, 
-        
+        identifier:     $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
+        number_literal: $ => /\d+/,
+        macro:         $ => 'define'
     }
 });
