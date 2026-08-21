@@ -1,5 +1,5 @@
 ============================
-Assignment integer example 1
+integer assignment test 1
 ============================
 
 int a = 1
@@ -33,7 +33,7 @@ int c = a + b + 2
 )
 
 ===========================
-Assignment string example 1
+string assignment test 1
 ===========================
 
 string test = "hello world"
@@ -64,7 +64,7 @@ string bot  = test + "goodbye"
       (string_literal))))
 
 =========================
-Statement print example 1
+print statement test 1
 =========================
 
 print(test)
