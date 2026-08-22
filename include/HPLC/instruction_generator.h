@@ -6,5 +6,5 @@
 class InstructionGeneratorBase
 {
 public:
-  virtual InstructionVector generate(SyntaxTree targetSyntaxTree) = 0;
+  virtual InstructionVector generate(std::shared_ptr<ProgramNode> program) = 0;
 };

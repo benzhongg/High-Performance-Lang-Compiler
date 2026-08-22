@@ -1,66 +1,103 @@
 #pragma once
-#include "lexer.h"
 
-enum NodeType
+#include "source_code.h"
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <vector>
+
+enum class NodeType { Program, VariableDecl, Define, Print, BinaryExpr, IdentifierExpr, LiteralExpr };
+enum class OperatorType { Plus, Minus, Multiply, Divide };
+enum class VariableType { Int, String };
+
+struct SourceSpan
 {
-    Unknown,
-    VariableDecl
-
+  FileName fileName;
+  uint32_t startByte {0};
+  uint32_t endByte {0};
+  uint32_t line {0};
+  uint32_t column {0};
+  uint32_t endLine {0};
+  uint32_t endColumn {0};
 };
 
-struct ASTBase
+struct ASTVisitor;
+struct ASTNode
 {
-    NodeType nodeType { NodeType::Unknown };
-    FileName fileName { ""};
-    int line { 0 };
-    int col { 0 };
+  NodeType nodeType;
+  SourceSpan span;
+  virtual ~ASTNode() = default;
+  virtual void accept(ASTVisitor& visitor) = 0;
 };
 
-struct VariableDeclNode : public ASTBase
+using ASTNodePtr = std::shared_ptr<ASTNode>;
+
+struct ProgramNode;
+struct VariableDeclNode;
+struct DefineNode;
+struct PrintNode;
+struct BinaryExprNode;
+struct IdentifierExprNode;
+struct LiteralExprNode;
+
+struct ASTVisitor
 {
-    VariableType varType = int;
-    Operand targetOperand = a;
-    TargetValue targetValue = 5;
+  virtual ~ASTVisitor() = default;
+  virtual void visit(ProgramNode&) = 0;
+  virtual void visit(VariableDeclNode&) = 0;
+  virtual void visit(DefineNode&) = 0;
+  virtual void visit(PrintNode&) = 0;
+  virtual void visit(BinaryExprNode&) = 0;
+  virtual void visit(IdentifierExprNode&) = 0;
+  virtual void visit(LiteralExprNode&) = 0;
 };
 
+struct ExpressionNode : ASTNode {};
 
-enum OperatorType
+struct ProgramNode final : ASTNode
 {
-
+  std::vector<ASTNodePtr> statements;
+  void accept(ASTVisitor& visitor) override { visitor.visit(*this); }
 };
 
-struct NodeBase
+struct VariableDeclNode final : ASTNode
 {
+  VariableType variableType;
+  std::string name;
+  std::shared_ptr<ExpressionNode> value;
+  void accept(ASTVisitor& visitor) override { visitor.visit(*this); }
 };
 
-struct ProgramNode : public NodeBase
+struct DefineNode final : ASTNode
 {
+  std::string name;
+  std::string value;
+  void accept(ASTVisitor& visitor) override { visitor.visit(*this); }
 };
 
-struct ExpressionNode : public NodeBase
+struct PrintNode final : ASTNode
 {
+  std::shared_ptr<ExpressionNode> argument;
+  void accept(ASTVisitor& visitor) override { visitor.visit(*this); }
 };
 
-struct PrefixExpression : public ExpressionNode // ++x;
+struct BinaryExprNode final : ExpressionNode
 {
-    OperatorType operatorType;
-    Operator operator;
+  std::shared_ptr<ExpressionNode> left;
+  OperatorType operatorType;
+  std::shared_ptr<ExpressionNode> right;
+  void accept(ASTVisitor& visitor) override { visitor.visit(*this); }
 };
 
-struct PostFixExpression : public ExpressionNode // x++;
+struct IdentifierExprNode final : ExpressionNode
 {
-
+  std::string name;
+  void accept(ASTVisitor& visitor) override { visitor.visit(*this); }
 };
 
-struct AddressOfNode : public ExpressionNode
+struct LiteralExprNode final : ExpressionNode
 {
-    OperatorType operatorType
-};
-
-struct DereferenceNode : public ExpressionNode
-{
-};
-
-struct SizeOfNode : public ExpressionNode
-{
+  std::string value;
+  bool isString {false};
+  void accept(ASTVisitor& visitor) override { visitor.visit(*this); }
 };

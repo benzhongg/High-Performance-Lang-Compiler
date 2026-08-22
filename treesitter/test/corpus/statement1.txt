@@ -1,0 +1,32 @@
+============================
+integer assignment
+============================
+
+int a = 1
+int b = a
+int c = a + b + 2
+
+---
+
+(program_file
+  (assignment (variable_type) (identifier) (number_literal))
+  (assignment (variable_type) (identifier) (identifier))
+  (assignment (variable_type) (identifier)
+    (binary_expression
+      (binary_expression (identifier) (identifier))
+      (number_literal))))
+
+=========================
+print statement
+=========================
+
+print(test)
+print("a")
+print(test + "tail")
+
+---
+
+(program_file
+  (print (identifier))
+  (print (string_literal))
+  (print (binary_expression (identifier) (string_literal))))

@@ -1,5 +1,4 @@
 #pragma once
-#include "lexer.h"
 #include <fstream>
 #include <sstream>
 #include <stdexcept>

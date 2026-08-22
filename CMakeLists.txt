@@ -24,6 +24,14 @@ endif()
 include(FetchContent)
 
 FetchContent_Declare(
+	tree_sitter
+	GIT_REPOSITORY https://github.com/tree-sitter/tree-sitter.git
+	GIT_TAG v0.22.6
+	SOURCE_SUBDIR lib
+)
+FetchContent_MakeAvailable(tree_sitter)
+
+FetchContent_Declare(
 	googletest
 	URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
 )
@@ -37,5 +45,6 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(googlebenchmark)
 
 add_subdirectory(src)
+add_subdirectory(treesitter)
 add_subdirectory(test)
 add_subdirectory(app)

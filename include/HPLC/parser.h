@@ -1,57 +1,29 @@
 #pragma once
+
 #include "ast_node.h"
-#include "lexer.h"
+#include <memory>
+#include <string>
+#include <vector>
 
-using SyntaxTree = ProgramNode;
+extern "C" {
+#include <tree_sitter/api.h>
+}
 
-class ParserBase
+struct Diagnostic
 {
-public:
-  virtual SyntaxTree parse(const TokenVector& targetVector) = 0;
+  std::string message;
+  SourceSpan span;
 };
 
-class HPLCParser : public ParserBase
+struct ParseResult
+{
+  std::shared_ptr<TSTree> tree;
+  std::vector<Diagnostic> diagnostics;
+  bool hasErrors() const { return !diagnostics.empty(); }
+};
+
+class HPLCParser
 {
 public:
-  Syntaxtree parse(const TokenVector& targetVector) override
-  { 
-    bool is_variable_decl { false };
-
-    TokenVector variable_decl_tokens {};
-    VariableDeclNode tempNode {};
-
-    for (auto& token : targetVector)
-    {
-      //this means the code is planning on decl a var
-      if (token.type == TokenType::KeywordInt)
-      {
-        is_variable_decl = true;
-        tempNode.type = Int; 
-        // identifer present
-        // assign present
-        // number present
-        // then semicolon
-      }
-      else if (token.type == TokenType::Identifier)
-      {
-        if (is_variable_decl)
-        {
-          tempNode.operand = token.lexeme;
-        }
-      }
-      else if (token.type == TokenType::Number)
-      {
-        if (is_variable_decl)
-        {
-          temp.value = std::stoi(token.lexeme);
-        }
-        
-      }
-      else if (token.type == TokenType::Semicolon)
-      {
-        is  
-        is_variable_decl = false;
-      }
-    }
-  } 
-}
+  ParseResult parse(const SourceCode& sourceCode) const;
+};

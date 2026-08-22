@@ -1,8 +1,8 @@
 #pragma once
-#include "parser.h"
+#include "ast_node.h"
 
 class SemanticAnalyzerBase
 {
 public:
-  virtual SyntaxTree analyze(SyntaxTree targetAST) = 0;
+  virtual std::shared_ptr<ProgramNode> analyze(std::shared_ptr<ProgramNode> targetAST) = 0;
 };

@@ -1,5 +1,6 @@
 #pragma once
-#include "lexer.h"
+#include "source_code.h"
+#include <vector>
 
 enum InstructionType
 {

@@ -1,5 +1,7 @@
 #include "HPLC/preprocessor.h"
-#include "HPLC/lexer.h"
+#include "HPLC/ast_builder.h"
+#include "HPLC/parser.h"
+#include <iostream>
 
 int main(int argc, char* argv[])
 {
@@ -18,32 +20,20 @@ int main(int argc, char* argv[])
   preprocessor->preprocess(source_code);
   std::cout << source_code.contents;
 
-  // step 2 lexer module
-  LexerBase* lexer {new HPLCLexer()};
-  TokenVector lexed_token_vector {lexer->tokenize(source_code)};
-  for (auto& token : lexed_token_vector)
+  HPLCParser parser;
+  ParseResult parse_result {parser.parse(source_code)};
+  ASTBuilder ast_builder;
+  std::vector<Diagnostic> diagnostics {parse_result.diagnostics};
+  auto program {ast_builder.build(parse_result, source_code, diagnostics)};
+  for (const auto& diagnostic : diagnostics)
   {
-    token.print();
+    std::cerr << diagnostic.message << " at " << diagnostic.span.line + 1 << ':' << diagnostic.span.column + 1
+              << std::endl;
   }
-  
-  // // step 3 parser module
-  // ParserBase* parser { new HPLCParser () };
-  // SyntaxTree  syntaxTree {parser->parse(tokenVector)};
 
-  // // step 4 semantic analysis module
-  // SemanticAnalyzerBase* semanticAnalyzer {nullptr};
-  // SyntaxTree            checkedSyntaxTree {semanticAnalyzer->analyze(syntaxTree)};
+  if (!diagnostics.empty())
+    return 1;
 
-  // // step 5 instruction generation module
-  // InstructionGeneratorBase* instructionGenerator {nullptr};
-  // InstructionVector         instructionVector {instructionGenerator->generate(checkedSyntaxTree)};
+  std::cout << "parsed " << program->statements.size() << " statements" << std::endl;
 
-  // // step 6 optimizer
-  // OptimizerBase*    optimizer {nullptr};
-  // InstructionVector optimizedInstructionVector {optimizer->optimize(instructionVector)};
-
-  // // step 7 byteCodeGenerator
-  // ByteCodeGeneratorBase* byteCodeGenerator {nullptr};
-  // std::string            executableName {"exec"};
-  // byteCodeGenerator->generate(optimizedInstructionVector, executableName);
 }
